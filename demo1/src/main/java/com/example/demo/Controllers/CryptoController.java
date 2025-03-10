@@ -2,24 +2,32 @@ package com.example.demo.Controllers;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class CryptoController {
-    private List<String> cryptos = new ArrayList<>();
+    private Map<String, Double> cryptos = new HashMap<>();
 
-    @GetMapping("/addCrypto")
-    public String addCrypto(String crypto) {
-        cryptos.add(crypto);
+    @PostMapping("/addCrypto")
+    public String addCrypto(String crypto, double price) {
+        cryptos.put(crypto, price);
         return crypto + " added";
     }
 
     @GetMapping("/getAll")
     public List<String> getAllCrypto() {
-        return cryptos;
+        List<String> AllCryptos = new ArrayList<>();
+
+        for (Map.Entry<String, Double> entry : cryptos.entrySet()) {
+            AllCryptos.add(entry.getKey() + ": $" + entry.getValue());
+        }
+        return AllCryptos;
     }
 
     @GetMapping("/deleteCrypto")
@@ -30,7 +38,6 @@ public class CryptoController {
 
     @GetMapping("/edit")
     public String editCrypto(String oldCrypto,String newCrypto) {
-        cryptos.set(cryptos.indexOf(oldCrypto), newCrypto);
-        return oldCrypto + " changed to " + newCrypto;
+        return "Not implemented yet";
     }
 }
