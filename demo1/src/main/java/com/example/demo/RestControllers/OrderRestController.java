@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/order")
@@ -25,9 +26,14 @@ public class OrderRestController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<OrderModel> addOrder(String user, String orderType, String crypto , String amount) {
+    public ResponseEntity<OrderModel> addOrder(@RequestBody Map<String, String> body) {
         try {
             OrderModel order = new OrderModel();
+            String user = body.get("user");
+            String orderType = body.get("orderType");
+            String crypto = body.get("crypto");
+            double amount = Double.valueOf(body.get("amount"));
+
             order.setUser(user);
             order.setOrderType(orderType);
             order.setCrypto(crypto);
@@ -42,17 +48,20 @@ public class OrderRestController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<String> updateOrder(String newId,String user, String orderType, String crypto , String amount) {
+    public ResponseEntity<String> updateOrder(@RequestBody Map<String, String> body) {
         try {
-            int id = Integer.valueOf(newId);
+            int id = Integer.valueOf(body.get("id"));
+            String user = body.get("user");
+            String orderType = body.get("orderType");
+            String crypto = body.get("crypto");
+            double amount = Double.valueOf(body.get("amount"));
+
             OrderModel order = new OrderModel();
             order.setId(id);
             order.setUser(user);
             order.setOrderType(orderType);
             order.setCrypto(crypto);
-
-            double newAmount = Double.valueOf(amount);
-            order.setAmount(newAmount);
+            order.setAmount(amount);
 
 
             orderService.updateOrder(order);

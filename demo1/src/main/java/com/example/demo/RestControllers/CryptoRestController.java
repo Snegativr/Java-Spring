@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/crypto")
@@ -26,13 +27,17 @@ public class CryptoRestController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<CryptoModel> addCrypto(String crypto, String price) {
+    public ResponseEntity<CryptoModel> addCrypto(@RequestBody Map<String, String> body) {
         try {
-
-            double newPrice = Double.valueOf(price);
             CryptoModel cryptoModel = new CryptoModel();
+
+            String crypto = body.get("crypto");
+            double price = Double.valueOf(body.get("price"));
+
+
             cryptoModel.setCrypto(crypto);
-            cryptoModel.setPrice(newPrice);
+            cryptoModel.setPrice(price);
+
             cryptoService.AddCrypto(cryptoModel);
             return ResponseEntity.ok(cryptoModel);
         } catch (Exception e) {
@@ -41,14 +46,18 @@ public class CryptoRestController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<String> updateCrypto(String newId,String crypto, String price) {
+    public ResponseEntity<String> updateCrypto(@RequestBody Map<String, String> body) {
         try {
-            int id = Integer.valueOf(newId);
-            double newPrice = Double.valueOf(price);
+
             CryptoModel cryptoModel = new CryptoModel();
+
+            int id = Integer.valueOf(body.get("id"));
+            String crypto = body.get("crypto");
+            double price = Double.valueOf(body.get("price"));
+
             cryptoModel.setId(id);
             cryptoModel.setCrypto(crypto);
-            cryptoModel.setPrice(newPrice);
+            cryptoModel.setPrice(price);
 
             cryptoService.updateCrypto(cryptoModel);
             return ResponseEntity.ok("Криптовалюта оновлена");
