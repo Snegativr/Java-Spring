@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>add Order</title>
+</head>
+<body>
+<h2>Add new order</h2>
+<form th:action="@{/order/add}" th:object="${order}" method="POST">
+    <input placeholder="User" th:field="*{user}" type="text">
+    <span style="color: red" th:if="${#fields.hasErrors('user')}" th:errors="*{user}"></span>
+
+    <input type="text" th:field="*{orderType}" placeholder="Order Type" >
+    <span style="color: red" th:if="${#fields.hasErrors('orderType')}" th:errors="*{orderType}"></span>
+
+    <input type="text" th:field="*{crypto}" placeholder="Crypto" >
+    <span style="color: red" th:if="${#fields.hasErrors('crypto')}" th:errors="*{crypto}"></span>
+
+    <input type="text" th:field="*{amount}" placeholder="Amount" >
+    <span style="color: red" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></span>
+
+    <button type="submit">Add</button>
+</form>
+</body>
+</html>

@@ -1,36 +1,52 @@
 package com.example.demo.Controllers;
 
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.Models.CryptoModel;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+@Controller
+@RequestMapping("/crypto")
 public class CryptoController {
-    private List<String> cryptos = new ArrayList<>();
-
-    @GetMapping("/addCrypto")
-    public String addCrypto(String crypto) {
-        cryptos.add(crypto);
-        return crypto + " added";
-    }
+    private List<CryptoModel> cryptos = new ArrayList<>();
+    private int idCounter = 1;
 
     @GetMapping("/getAll")
-    public List<String> getAllCrypto() {
-        return cryptos;
+    public String getAllCrypto(Model model) {
+        model.addAttribute("cryptos", cryptos);
+        return "crypto-list";
     }
 
-    @GetMapping("/deleteCrypto")
-    public String deleteCrypto(String crypto) {
-        cryptos.remove(crypto);
-        return crypto + " deleted";
+    @GetMapping("/add")
+    public String ShowCryptoAddForm(Model model) {
+        model.addAttribute("crypto", new CryptoModel());
+        return "add-crypto";
     }
 
-    @GetMapping("/edit")
-    public String editCrypto(String oldCrypto,String newCrypto) {
-        cryptos.set(cryptos.indexOf(oldCrypto), newCrypto);
-        return oldCrypto + " changed to " + newCrypto;
+    @PostMapping("/add")
+    public String addCrypto(@Valid @ModelAttribute("crypto") CryptoModel crypto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "add-crypto";
+        }
+        crypto.setId(idCounter++);
+        cryptos.add(crypto);
+        return "redirect:/crypto/getAll";
     }
+
+    @PostMapping("/delete/{id}")
+    public String deleteCrypto(@PathVariable int id) {
+        cryptos.removeIf(crypto -> crypto.getId() == id);
+        return "redirect:/crypto/getAll";
+    }
+
+//    @PutMapping("/editCrypto/{id}")
+//    public String editUser(@PathVariable int id,@RequestBody CryptoModel crypto) {
+//        cryptos.set(id, crypto);
+//        return "crypto changed" + crypto;
+//    }
 }
