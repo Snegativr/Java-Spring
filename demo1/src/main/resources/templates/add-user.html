@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>add User</title>
+</head>
+<body>
+<h2>Add new user</h2>
+<form th:action="@{/user/add}" th:object="${user}" method="POST">
+    <input placeholder="Username" th:field="*{username}" type="text">
+    <span style="color: red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+
+    <input type="text" th:field="*{password}" placeholder="Password" >
+    <span style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+
+    <button type="submit">Add</button>
+</form>
+</body>
+</html>
