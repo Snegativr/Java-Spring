@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OrderPage</title>
+</head>
+<body>
+<h2>All Orders</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Order type</th>
+        <th>Crypto</th>
+        <th>Amount</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.user}"></td>
+        <td th:text="${order.orderType}"></td>
+        <td th:text="${order.crypto}"></td>
+        <td th:text="${order.amount}"></td>
+        <td>
+            <form th:action="@{/orders/removeOrder/{id}(id=${order.id})}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<h2>Add new order</h2>
+<form th:action="@{/orders/createOrder}" th:object="${order}" method="post">
+    <input type="text" th:field="*{user}" placeholder="User" >
+    <span style="color: red" th:if="${#fields.hasErrors('user')}" th:errors="*{user}"></span>
+
+    <input type="text" th:field="*{orderType}" placeholder="Order Type" >
+    <span style="color: red" th:if="${#fields.hasErrors('orderType')}" th:errors="*{orderType}"></span>
+
+    <input type="text" th:field="*{crypto}" placeholder="Crypto" >
+    <span style="color: red" th:if="${#fields.hasErrors('crypto')}" th:errors="*{crypto}"></span>
+
+    <input type="text" th:field="*{amount}" placeholder="Amount" >
+    <span style="color: red" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></span>
+
+    <button type="submit">Add</button>
+</form>
+
+
+</body>
+</html>
