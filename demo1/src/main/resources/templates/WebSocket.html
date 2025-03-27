@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+
+
+
+<h2>Повідомлення від аспектів</h2>
+<div id="aspect-messages">
+    <div><strong>Очікування повідомлень...</strong></div>
+</div>
+
+<script>
+    const socket = new SockJS('/ws');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+        console.log('WebSocket connected:', frame);
+
+        stompClient.subscribe('/topic/CryptoLogger', function (message) {
+            showMessage("CryptoLogger", message.body, 'success');
+        });
+
+        stompClient.subscribe('/topic/OrderAspect', function (message) {
+            showMessage("OrderAspect", message.body, 'success');
+        });
+    });
+
+    function showMessage(source, text, type) {
+        const msg = document.createElement('div');
+        msg.className = "msg " + (type || '');
+        msg.textContent = "🔔 [" + source + "] " + text;
+        document.getElementById('aspect-messages').appendChild(msg);
+    }
+
+</script>
+</body>
+</html>

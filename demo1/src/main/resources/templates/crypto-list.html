@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <title>Crypto-list</title>
+</head>
+<body>
+<h2>All Cryptos</h2>
+<table border="1" id="crypto-table">
+    <tr>
+        <th>ID</th>
+        <th>Crypto</th>
+        <th>Price</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="crypto : ${cryptos}" th:id="'crypto-row-' + ${crypto.id}">
+        <td th:text="${crypto.id}"></td>
+        <td th:text="${crypto.crypto}"></td>
+        <td th:text="${crypto.price}"></td>
+        <td>
+            <button class="delete-btn" th:data-id="${crypto.id}">Delete</button>
+        </td>
+    </tr>
+</table>
+
+<a href="/crypto/add">add crypto</a>
+<a href="/main/home">home</a>
+
+<h2>Повідомлення від аспектів</h2>
+<div id="aspect-messages">
+    <div><strong>Очікування повідомлень...</strong></div>
+</div>
+
+<script>
+    // WebSocket логіка
+    const socket = new SockJS('/ws');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+        console.log('WebSocket connected:', frame);
+
+        stompClient.subscribe('/topic/cryptologger', function (message) {
+            showMessage("CryptoLogger", message.body);
+        });
+
+        stompClient.subscribe('/topic/orderaspect', function (message) {
+            showMessage("OrderAspect", message.body);
+        });
+    });
+
+    function showMessage(source, text, type) {
+        const msg = document.createElement('div');
+        msg.className = "msg " + (type || '');
+        msg.textContent =  "From: " + source + " Body: " + text;
+        document.getElementById('aspect-messages').appendChild(msg);
+    }
+
+    // Асинхронне видалення криптовалюти
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const cryptoId = this.getAttribute('data-id');
+            fetch(`/crypto/delete/${cryptoId}`, {
+                method: 'POST'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById(`crypto-row-${cryptoId}`).remove();
+                        showMessage("DELETE", "Криптовалюту успішно видалено.", 'success');
+                    } else {
+                        showMessage("DELETE", "Помилка при видаленні.", 'error');
+                    }
+                })
+                .catch(error => {
+                    showMessage("DELETE", "Виняток: " + error, 'error');
+                });
+        });
+    });
+</script>
+</body>
+</html>
