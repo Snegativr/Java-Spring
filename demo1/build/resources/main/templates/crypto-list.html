@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Crypto-list</title>
+</head>
+<body>
+<h2>All Cryptos</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Crypto</th>
+        <th>Price</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="crypto : ${cryptos}">
+        <td th:text="${crypto.id}"></td>
+        <td th:text="${crypto.crypto}"></td>
+        <td th:text="${crypto.price}"></td>
+        <td>
+            <form th:action="@{/crypto/delete/{id}(id=${crypto.id})}" method="POST">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+
+</table>
+
+<a href="/crypto/add">add crypto</a>
+<a href="/main/home">home</a>
+</body>
+</html>
